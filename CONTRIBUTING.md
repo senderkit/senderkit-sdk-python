@@ -57,3 +57,8 @@ pytest --cov=senderkit
 2. Merge to `main`.
 3. Create a GitHub Release with tag `vX.Y.Z` matching the new version.
 4. The `Release` workflow builds and publishes to PyPI via Trusted Publishing.
+
+## Code of Conduct
+
+By participating in this project you agree to abide by the
+[Code of Conduct](CODE_OF_CONDUCT.md).
