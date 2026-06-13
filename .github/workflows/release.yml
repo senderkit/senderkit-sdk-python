@@ -1,22 +1,54 @@
 name: Release
 
-# Publishes to PyPI when a GitHub Release is published. Uses PyPI Trusted
-# Publishing (OIDC) — no API tokens or secrets are stored in the repo.
-# One-time setup: add a trusted publisher on PyPI for this repo + the
-# `release.yml` workflow + the `pypi` environment.
-# https://docs.pypi.org/trusted-publishers/
+# Automated releases via release-please + PyPI Trusted Publishing.
+#
+# Flow:
+#   1. Pushes to main run release-please, which maintains a "release PR" that
+#      bumps the version (src/senderkit/_version.py) and CHANGELOG.md from the
+#      Conventional Commit history.
+#   2. Merging that release PR tags the version + creates the GitHub Release and,
+#      in the same run, builds and publishes to PyPI.
+#
+# Everything stays in ONE workflow run so it does not depend on the GitHub
+# Release event (events raised by GITHUB_TOKEN do not trigger other workflows).
+#
+# One-time repo setup:
+#   - Settings → Actions → General → Workflow permissions:
+#       enable "Allow GitHub Actions to create and approve pull requests".
+#   - A PyPI Trusted Publisher for this repo → workflow "release.yml" →
+#     environment "pypi". https://docs.pypi.org/trusted-publishers/
 
 on:
-  release:
-    types: [published]
+  push:
+    branches: [main]
 
 permissions:
   contents: read
 
 jobs:
+  release-please:
+    name: Release please
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # create tags + GitHub releases
+      pull-requests: write # open/update the release PR
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
   build:
     name: Build distributions
+    needs: release-please
+    if: needs.release-please.outputs.release_created == 'true'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
@@ -28,9 +60,9 @@ jobs:
         run: python -m build
       - name: Check metadata
         run: twine check dist/*
-      - name: Verify version matches release tag
+      - name: Verify built version matches the release tag
         env:
-          TAG: ${{ github.event.release.tag_name }}
+          TAG: ${{ needs.release-please.outputs.tag_name }}
         run: |
           VERSION="$(python -c 'import senderkit; print(senderkit.__version__)')"
           echo "Package version: $VERSION"
@@ -46,12 +78,14 @@ jobs:
 
   publish:
     name: Publish to PyPI
-    needs: build
+    needs: [release-please, build]
+    if: needs.release-please.outputs.release_created == 'true'
     runs-on: ubuntu-latest
     environment:
       name: pypi
       url: https://pypi.org/p/senderkit
     permissions:
+      contents: read
       id-token: write # required for Trusted Publishing
     steps:
       - uses: actions/download-artifact@v8
