@@ -22,18 +22,12 @@ class Templates:
 
     def get(self, slug: str) -> TemplateDetail:
         """Return a template's detail, including its current published version."""
-        return TemplateDetail.from_dict(
-            self._t.request_json("GET", f"/v1/templates/{slug}")
-        )
+        return TemplateDetail.from_dict(self._t.request_json("GET", f"/v1/templates/{slug}"))
 
-    def render(
-        self, slug: str, vars: Optional[Dict[str, Any]] = None
-    ) -> RenderResult:
+    def render(self, slug: str, vars: Optional[Dict[str, Any]] = None) -> RenderResult:
         """Render the published version with ``vars`` without sending."""
         return RenderResult.from_dict(
-            self._t.request_json(
-                "POST", f"/v1/templates/{slug}/render", body={"vars": vars or {}}
-            )
+            self._t.request_json("POST", f"/v1/templates/{slug}/render", body={"vars": vars or {}})
         )
 
 
@@ -49,13 +43,9 @@ class AsyncTemplates:
         return [TemplateSummary.from_dict(t) for t in items]
 
     async def get(self, slug: str) -> TemplateDetail:
-        return TemplateDetail.from_dict(
-            await self._t.request_json("GET", f"/v1/templates/{slug}")
-        )
+        return TemplateDetail.from_dict(await self._t.request_json("GET", f"/v1/templates/{slug}"))
 
-    async def render(
-        self, slug: str, vars: Optional[Dict[str, Any]] = None
-    ) -> RenderResult:
+    async def render(self, slug: str, vars: Optional[Dict[str, Any]] = None) -> RenderResult:
         return RenderResult.from_dict(
             await self._t.request_json(
                 "POST", f"/v1/templates/{slug}/render", body={"vars": vars or {}}

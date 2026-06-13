@@ -9,9 +9,7 @@ QUEUED = {"id": "msg_1", "status": "queued", "livemode": False}
 
 @respx.mock
 def test_send_basic(client):
-    route = respx.post(f"{BASE_URL}/v1/send").mock(
-        return_value=json_response(202, QUEUED)
-    )
+    route = respx.post(f"{BASE_URL}/v1/send").mock(return_value=json_response(202, QUEUED))
     result = client.send("welcome", "user@example.com", vars={"name": "Ada"})
 
     assert (result.id, result.status, result.livemode) == ("msg_1", "queued", False)
@@ -28,9 +26,7 @@ def test_send_basic(client):
 
 @respx.mock
 def test_send_custom_idempotency_key(client):
-    route = respx.post(f"{BASE_URL}/v1/send").mock(
-        return_value=json_response(202, QUEUED)
-    )
+    route = respx.post(f"{BASE_URL}/v1/send").mock(return_value=json_response(202, QUEUED))
     client.send("welcome", "user@example.com", idempotency_key="my-key")
     assert route.calls.last.request.headers["idempotency-key"] == "my-key"
 
@@ -39,9 +35,7 @@ def test_send_custom_idempotency_key(client):
 def test_send_serializes_envelope_and_datetime(client):
     from datetime import datetime
 
-    route = respx.post(f"{BASE_URL}/v1/send").mock(
-        return_value=json_response(202, QUEUED)
-    )
+    route = respx.post(f"{BASE_URL}/v1/send").mock(return_value=json_response(202, QUEUED))
     client.send(
         "welcome",
         "user@example.com",
@@ -67,9 +61,7 @@ def test_mode_detection():
 
 @respx.mock
 async def test_send_async(aclient):
-    route = respx.post(f"{BASE_URL}/v1/send").mock(
-        return_value=json_response(202, QUEUED)
-    )
+    route = respx.post(f"{BASE_URL}/v1/send").mock(return_value=json_response(202, QUEUED))
     result = await aclient.send("welcome", "user@example.com")
     assert result.id == "msg_1"
     assert route.calls.last.request.headers["idempotency-key"]

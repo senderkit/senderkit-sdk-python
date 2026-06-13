@@ -242,9 +242,7 @@ class TemplateVersion:
     @classmethod
     def from_dict(cls, d: Dict[str, Any]) -> TemplateVersion:
         raw_vars = d.get("variables") or []
-        variables = [
-            TemplateVariable.from_dict(v) for v in raw_vars if isinstance(v, dict)
-        ]
+        variables = [TemplateVariable.from_dict(v) for v in raw_vars if isinstance(v, dict)]
         return cls(
             version_number=int(d.get("versionNumber", 0)),
             variables=variables,
