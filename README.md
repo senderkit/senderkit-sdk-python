@@ -1,5 +1,13 @@
 # SenderKit Python SDK
 
+[![PyPI version](https://img.shields.io/pypi/v/senderkit.svg)](https://pypi.org/project/senderkit/)
+[![Python versions](https://img.shields.io/pypi/pyversions/senderkit.svg)](https://pypi.org/project/senderkit/)
+[![CI](https://github.com/senderkit/senderkit-sdk-python/actions/workflows/ci.yml/badge.svg)](https://github.com/senderkit/senderkit-sdk-python/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/senderkit/senderkit-sdk-python/actions/workflows/codeql.yml/badge.svg)](https://github.com/senderkit/senderkit-sdk-python/actions/workflows/codeql.yml)
+[![codecov](https://codecov.io/gh/senderkit/senderkit-sdk-python/branch/main/graph/badge.svg)](https://codecov.io/gh/senderkit/senderkit-sdk-python)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
+
 The official Python client for [SenderKit](https://senderkit.com) — send transactional
 **email, SMS, push, and web-push** through a single API, from one client.
 

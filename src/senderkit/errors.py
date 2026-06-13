@@ -73,9 +73,7 @@ class RateLimitError(APIError):
         request_id: Optional[str] = None,
         retry_after: Optional[float] = None,
     ) -> None:
-        super().__init__(
-            message, status=status, code=code, issues=issues, request_id=request_id
-        )
+        super().__init__(message, status=status, code=code, issues=issues, request_id=request_id)
         self.retry_after = retry_after
 
 

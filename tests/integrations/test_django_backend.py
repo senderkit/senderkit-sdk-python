@@ -47,9 +47,7 @@ def _reset_client():
 def test_send_mail_routes_through_senderkit():
     from django.core.mail import send_mail
 
-    route = respx.post(f"{BASE_URL}/v1/send").mock(
-        return_value=httpx.Response(202, json=QUEUED)
-    )
+    route = respx.post(f"{BASE_URL}/v1/send").mock(return_value=httpx.Response(202, json=QUEUED))
     sent = send_mail(
         subject="Hi",
         message="Plain body",
@@ -70,9 +68,7 @@ def test_send_mail_routes_through_senderkit():
 def test_send_html_alternative():
     from django.core.mail import EmailMultiAlternatives
 
-    route = respx.post(f"{BASE_URL}/v1/send").mock(
-        return_value=httpx.Response(202, json=QUEUED)
-    )
+    route = respx.post(f"{BASE_URL}/v1/send").mock(return_value=httpx.Response(202, json=QUEUED))
     msg = EmailMultiAlternatives(
         subject="Hi", body="text", from_email="f@example.com", to=["a@example.com"]
     )

@@ -17,3 +17,5 @@ htmlcov/
 # Local editor / tooling (not part of the SDK)
 .vscode/
 .claude/
+.idea
+.gitattributes

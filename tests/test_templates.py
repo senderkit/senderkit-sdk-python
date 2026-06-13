@@ -41,9 +41,7 @@ def test_get_template_with_version(client):
                 "updatedAt": "2026-01-01T00:00:00Z",
                 "currentVersion": {
                     "versionNumber": 3,
-                    "variables": [
-                        {"name": "name", "type": "string", "required": True}
-                    ],
+                    "variables": [{"name": "name", "type": "string", "required": True}],
                     "publishedAt": "2026-01-01T00:00:00Z",
                 },
             },

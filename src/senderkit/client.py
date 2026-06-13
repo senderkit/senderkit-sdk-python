@@ -67,9 +67,7 @@ class SenderKit:
         if not api_key:
             raise ValueError("api_key is required")
         self.mode = _mode_for_key(api_key)
-        self._transport = Transport(
-            api_key, base_url, timeout, max_retries, http_client
-        )
+        self._transport = Transport(api_key, base_url, timeout, max_retries, http_client)
         self.messages = Messages(self._transport)
         self.templates = Templates(self._transport)
 
@@ -138,9 +136,7 @@ class SenderKit:
     def _send(self, request: SendItem, idempotency_key: Optional[str] = None) -> SendResult:
         body, own_key = build_send(request)
         key = idempotency_key or own_key or str(uuid.uuid4())
-        data = self._transport.request_json(
-            "POST", "/v1/send", body=body, idempotency_key=key
-        )
+        data = self._transport.request_json("POST", "/v1/send", body=body, idempotency_key=key)
         return SendResult.from_dict(data)
 
     def send_batch(
@@ -167,9 +163,7 @@ class SenderKit:
             return []
 
         with ThreadPoolExecutor(max_workers=max(1, concurrency)) as pool:
-            for outcome in pool.map(
-                lambda pair: run(*pair), list(enumerate(requests))
-            ):
+            for outcome in pool.map(lambda pair: run(*pair), list(enumerate(requests))):
                 results[outcome.index] = outcome
 
         return [r for r in results if r is not None]
@@ -203,9 +197,7 @@ class AsyncSenderKit:
         if not api_key:
             raise ValueError("api_key is required")
         self.mode = _mode_for_key(api_key)
-        self._transport = AsyncTransport(
-            api_key, base_url, timeout, max_retries, http_client
-        )
+        self._transport = AsyncTransport(api_key, base_url, timeout, max_retries, http_client)
         self.messages = AsyncMessages(self._transport)
         self.templates = AsyncTemplates(self._transport)
 
@@ -269,9 +261,7 @@ class AsyncSenderKit:
             )
         )
 
-    async def _send(
-        self, request: SendItem, idempotency_key: Optional[str] = None
-    ) -> SendResult:
+    async def _send(self, request: SendItem, idempotency_key: Optional[str] = None) -> SendResult:
         body, own_key = build_send(request)
         key = idempotency_key or own_key or str(uuid.uuid4())
         data = await self._transport.request_json(
@@ -299,15 +289,11 @@ class AsyncSenderKit:
                 except errors.SenderKitError as exc:
                     return BatchResult(ok=False, index=index, error=exc)
 
-        outcomes = await asyncio.gather(
-            *(run(i, r) for i, r in enumerate(requests))
-        )
+        outcomes = await asyncio.gather(*(run(i, r) for i, r in enumerate(requests)))
         return sorted(outcomes, key=lambda r: r.index)
 
     async def context(self) -> Context:
-        return Context.from_dict(
-            await self._transport.request_json("GET", "/v1/context")
-        )
+        return Context.from_dict(await self._transport.request_json("GET", "/v1/context"))
 
     async def aclose(self) -> None:
         await self._transport.aclose()

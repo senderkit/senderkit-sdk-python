@@ -8,9 +8,7 @@ QUEUED = {"id": "msg_1", "status": "queued", "livemode": False}
 
 @respx.mock
 def test_send_raw_email_infers_channel(client):
-    route = respx.post(f"{BASE_URL}/v1/send").mock(
-        return_value=json_response(202, QUEUED)
-    )
+    route = respx.post(f"{BASE_URL}/v1/send").mock(return_value=json_response(202, QUEUED))
     client.send_raw(
         "user@example.com",
         EmailContent(subject="Hi", html="<p>Hi {{name}}</p>", text="Hi"),
@@ -27,9 +25,7 @@ def test_send_raw_email_infers_channel(client):
 
 @respx.mock
 def test_send_raw_sms(client):
-    route = respx.post(f"{BASE_URL}/v1/send").mock(
-        return_value=json_response(202, QUEUED)
-    )
+    route = respx.post(f"{BASE_URL}/v1/send").mock(return_value=json_response(202, QUEUED))
     client.send_raw("+15555550123", SmsContent(body="Your code is 123456"))
     body = request_body(route.calls.last.request)
     assert body["channel"] == "sms"
@@ -38,9 +34,7 @@ def test_send_raw_sms(client):
 
 @respx.mock
 def test_send_raw_push(client):
-    route = respx.post(f"{BASE_URL}/v1/send").mock(
-        return_value=json_response(202, QUEUED)
-    )
+    route = respx.post(f"{BASE_URL}/v1/send").mock(return_value=json_response(202, QUEUED))
     client.send_raw("device-token", PushContent(title="T", body="B", badge=2))
     body = request_body(route.calls.last.request)
     assert body["channel"] == "push"
@@ -49,9 +43,7 @@ def test_send_raw_push(client):
 
 @respx.mock
 def test_send_raw_web_push(client):
-    route = respx.post(f"{BASE_URL}/v1/send").mock(
-        return_value=json_response(202, QUEUED)
-    )
+    route = respx.post(f"{BASE_URL}/v1/send").mock(return_value=json_response(202, QUEUED))
     client.send_raw(
         "subscription",
         WebPushContent(title="T", body="B", click_url="https://x.test/y"),

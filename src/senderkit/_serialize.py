@@ -126,9 +126,7 @@ def template_send_to_body(req: TemplateSend) -> Dict[str, Any]:
             "bcc": req.bcc,
             "replyTo": req.reply_to,
             "attachments": (
-                [_attachment_to_wire(a) for a in req.attachments]
-                if req.attachments
-                else None
+                [_attachment_to_wire(a) for a in req.attachments] if req.attachments else None
             ),
         }
     )

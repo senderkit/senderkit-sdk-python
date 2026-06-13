@@ -36,9 +36,7 @@ class Messages:
             metadata=metadata,
             tail=tail,
         )
-        return MessageList.from_dict(
-            self._t.request_json("GET", "/v1/messages", query=query)
-        )
+        return MessageList.from_dict(self._t.request_json("GET", "/v1/messages", query=query))
 
     def iter(
         self,
@@ -71,9 +69,7 @@ class Messages:
 
     def cancel(self, id: str) -> CancelResult:
         """Cancel a still-pending (scheduled or queued) message."""
-        return CancelResult.from_dict(
-            self._t.request_json("DELETE", f"/v1/messages/{id}")
-        )
+        return CancelResult.from_dict(self._t.request_json("DELETE", f"/v1/messages/{id}"))
 
 
 class AsyncMessages:
@@ -102,9 +98,7 @@ class AsyncMessages:
             metadata=metadata,
             tail=tail,
         )
-        return MessageList.from_dict(
-            await self._t.request_json("GET", "/v1/messages", query=query)
-        )
+        return MessageList.from_dict(await self._t.request_json("GET", "/v1/messages", query=query))
 
     async def aiter(
         self,
@@ -132,11 +126,7 @@ class AsyncMessages:
             cursor = page.next_cursor
 
     async def get(self, id: str) -> Message:
-        return Message.from_dict(
-            await self._t.request_json("GET", f"/v1/messages/{id}")
-        )
+        return Message.from_dict(await self._t.request_json("GET", f"/v1/messages/{id}"))
 
     async def cancel(self, id: str) -> CancelResult:
-        return CancelResult.from_dict(
-            await self._t.request_json("DELETE", f"/v1/messages/{id}")
-        )
+        return CancelResult.from_dict(await self._t.request_json("DELETE", f"/v1/messages/{id}"))

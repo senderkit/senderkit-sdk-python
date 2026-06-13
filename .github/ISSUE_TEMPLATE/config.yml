@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://docs.senderkit.com
+    about: Guides and API reference for SenderKit.
+  - name: Security vulnerability
+    url: https://github.com/senderkit/senderkit-sdk-python/security/advisories/new
+    about: Report security issues privately — please do not open a public issue.
+  - name: Questions & support
+    url: https://senderkit.com
+    about: For account or product questions, contact SenderKit support.

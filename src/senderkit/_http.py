@@ -121,9 +121,7 @@ def _raise_for_status(response: httpx.Response) -> None:
             request_id=request_id,
             retry_after=_parse_retry_after(response),
         )
-    raise errors.APIError(
-        message, status=status, code=code, issues=issues, request_id=request_id
-    )
+    raise errors.APIError(message, status=status, code=code, issues=issues, request_id=request_id)
 
 
 class _BaseTransport:
@@ -262,9 +260,7 @@ class AsyncTransport(_BaseTransport):
                 raise errors.NetworkError(f"Network error: {exc}") from exc
 
             if _is_retryable(response.status_code) and attempt < attempts - 1:
-                await asyncio.sleep(
-                    _backoff_seconds(attempt, _parse_retry_after(response))
-                )
+                await asyncio.sleep(_backoff_seconds(attempt, _parse_retry_after(response)))
                 continue
 
             _raise_for_status(response)
@@ -272,9 +268,7 @@ class AsyncTransport(_BaseTransport):
 
         raise errors.NetworkError("Request failed after retries")  # pragma: no cover
 
-    async def request_json(
-        self, method: str, path: str, **kwargs: Any
-    ) -> Dict[str, Any]:
+    async def request_json(self, method: str, path: str, **kwargs: Any) -> Dict[str, Any]:
         response = await self.request(method, path, **kwargs)
         if not response.content:
             return {}
