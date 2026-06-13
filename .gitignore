@@ -1,0 +1,19 @@
+.venv/
+venv/
+src/*.egg-info/
+**/__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.python-version
+.DS_Store
+dist/
+build/
+.env
+.env.local
+.coverage
+htmlcov/
+
+# Local editor / tooling (not part of the SDK)
+.vscode/
+.claude/
