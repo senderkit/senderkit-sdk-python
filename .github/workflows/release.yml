@@ -64,6 +64,9 @@ jobs:
         env:
           TAG: ${{ needs.release-please.outputs.tag_name }}
         run: |
+          # Install the freshly built wheel so we verify the artifact that is
+          # about to be published, not an editable/source checkout.
+          python -m pip install dist/*.whl
           VERSION="$(python -c 'import senderkit; print(senderkit.__version__)')"
           echo "Package version: $VERSION"
           echo "Release tag:     $TAG"

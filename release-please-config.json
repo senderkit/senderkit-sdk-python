@@ -4,6 +4,7 @@
     ".": {
       "release-type": "simple",
       "package-name": "senderkit",
+      "include-component-in-tag": false,
       "changelog-path": "CHANGELOG.md",
       "extra-files": ["src/senderkit/_version.py"]
     }
