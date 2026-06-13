@@ -2,20 +2,6 @@
 
 ## 0.1.0 (2026-06-13)
 
-
-### Features
-
-* automate releases with release-please ([a8ccebd](https://github.com/senderkit/senderkit-sdk-python/commit/a8ccebd6ebef1a4a5ff04e5b52d3027a12899193))
-* automate releases with release-please ([aec6d70](https://github.com/senderkit/senderkit-sdk-python/commit/aec6d700dc9c4cf8a7d42fa56c7ddbe4cb11c304))
-
-
-### Bug Fixes
-
-* bootstrap first release as 0.1.0 and fix release workflow ([46cf045](https://github.com/senderkit/senderkit-sdk-python/commit/46cf0450c11d71b58cf8ab710144c25e363800b3))
-* bootstrap first release as 0.1.0 and fix release workflow ([94e679a](https://github.com/senderkit/senderkit-sdk-python/commit/94e679a798544ef86246f83ecdf2e5e3127ab2dc))
-
-## 0.1.0
-
 Initial release of the hand-written SenderKit Python SDK (replacing the earlier
 Speakeasy-generated client).
 
