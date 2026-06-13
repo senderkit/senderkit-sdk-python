@@ -46,17 +46,28 @@ pytest --cov=senderkit
   `mypy`-clean.
 - **Style.** `ruff` handles linting and formatting (100-char lines). Match the
   surrounding code; the CI format gate is enforced.
-- **Changelog.** Add an entry to `CHANGELOG.md` for any user-facing change.
-- **Commits & PRs.** Keep PRs focused on one logical change. Write clear commit
-  messages explaining the *why*.
+- **Commits & PRs.** Keep PRs focused on one logical change. Use
+  [Conventional Commit](https://www.conventionalcommits.org/) messages — the
+  version bump and changelog are derived from them, so the prefix matters:
+  - `fix:` → patch release, `feat:` → minor release.
+  - `feat!:` or a `BREAKING CHANGE:` footer → breaking change.
+  - `docs:`, `chore:`, `test:`, `refactor:`, `ci:` → no release on their own.
+  - On squash-merge GitHub uses the **PR title**, so keep it conventional too.
+- **Changelog.** Generated automatically from commit messages — don't edit
+  `CHANGELOG.md` by hand.
 
 ## Releasing (maintainers)
 
-1. Bump `VERSION` in `src/senderkit/_version.py` (single source of truth) and
-   update `CHANGELOG.md`.
-2. Merge to `main`.
-3. Create a GitHub Release with tag `vX.Y.Z` matching the new version.
-4. The `Release` workflow builds and publishes to PyPI via Trusted Publishing.
+Releases are automated with
+[release-please](https://github.com/googleapis/release-please):
+
+1. Merge PRs to `main` with Conventional Commit messages.
+2. release-please maintains a **release PR** that bumps `VERSION` in
+   `src/senderkit/_version.py` (the single source of truth) and updates
+   `CHANGELOG.md`. Review and edit it as needed.
+3. Merging the release PR tags `vX.Y.Z`, creates the GitHub Release, and the
+   `Release` workflow builds and publishes to PyPI via Trusted Publishing — all
+   in one run.
 
 ## Code of Conduct
 

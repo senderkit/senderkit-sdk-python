@@ -17,5 +17,5 @@ Keep PRs focused — one logical change per PR.
 - [ ] `ruff format .` applied
 - [ ] `mypy src` passes
 - [ ] `pytest` passes (new behavior is covered by tests)
-- [ ] `CHANGELOG.md` updated for user-facing changes
+- [ ] PR title / commits follow [Conventional Commits](https://www.conventionalcommits.org/) (drives versioning & changelog)
 - [ ] Docs / docstrings updated if the public API changed
