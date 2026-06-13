@@ -16,7 +16,9 @@ jobs:
     name: Analyze (Python)
     runs-on: ubuntu-latest
     permissions:
-      security-events: write
+      actions: read # read workflow run metadata
+      contents: read # required for actions/checkout
+      security-events: write # upload CodeQL results
     steps:
       - uses: actions/checkout@v4
       - name: Initialize CodeQL
