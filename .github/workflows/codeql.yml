@@ -20,7 +20,7 @@ jobs:
       contents: read # required for actions/checkout
       security-events: write # upload CodeQL results
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
         with:
