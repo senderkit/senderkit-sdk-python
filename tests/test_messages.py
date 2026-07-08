@@ -62,6 +62,21 @@ def test_get_message(client):
     msg = client.messages.get("msg_1")
     assert msg.public_id == "msg_1"
     assert msg.raw["createdAt"] == "2026-01-01T00:00:00Z"  # forward-compat access
+    # Engagement timestamps default to None when the payload omits them.
+    assert msg.opened_at is None
+    assert msg.clicked_at is None
+
+
+@respx.mock
+def test_get_message_hydrates_engagement(client):
+    payload = _msg("msg_1") | {
+        "openedAt": "2026-01-01T00:05:00Z",
+        "clickedAt": "2026-01-01T00:06:00Z",
+    }
+    respx.get(f"{BASE_URL}/v1/messages/msg_1").mock(return_value=httpx.Response(200, json=payload))
+    msg = client.messages.get("msg_1")
+    assert msg.opened_at == "2026-01-01T00:05:00Z"
+    assert msg.clicked_at == "2026-01-01T00:06:00Z"
 
 
 @respx.mock
