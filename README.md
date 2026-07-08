@@ -124,10 +124,17 @@ sk.send(
     vars={"order": "#1234"},
     metadata={"order_id": "ord_1"},                      # arbitrary key/values for filtering & webhooks
     cc=["ops@example.com"],                              # email only
+    from_="hello@acme.com",                              # email only — From address override (bare address)
+    from_name="Acme Support",                            # email only — From display name → "Acme Support <hello@acme.com>"
     scheduled_at=datetime(2026, 1, 1, 9, 0, tzinfo=timezone.utc),  # datetime or ISO-8601 string
     idempotency_key="order-1234-shipped",                # optional; see Idempotency below
 )
 ```
+
+`from_` and `from_name` are email-only and each optional — either can be set alone, and both
+fall back to the provider connection's configured values. On managed sending the `from_`
+address is honored only on the workspace's verified sending domain; `from_name` always applies.
+The same two arguments work on `send_raw`.
 
 ### Raw content (no template)
 

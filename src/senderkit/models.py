@@ -112,6 +112,11 @@ class TemplateSend:
     bcc: Optional[List[str]] = None
     reply_to: Optional[str] = None
     attachments: Optional[List[Attachment]] = None
+    #: Email-only From address override (bare address). ``from_`` maps to the
+    #: wire field ``from``; the display name goes in ``from_name``.
+    from_: Optional[str] = None
+    #: Email-only From display name override, rendered as ``Name <address>``.
+    from_name: Optional[str] = None
     idempotency_key: Optional[str] = None
 
 
@@ -124,6 +129,8 @@ class RawSend:
     content: Content
     channel: Optional[ChannelLike] = None
     from_: Optional[str] = None
+    #: Email-only From display name override, rendered as ``Name <address>``.
+    from_name: Optional[str] = None
     interpolate: Optional[bool] = None
     vars: Optional[Vars] = None
     metadata: Optional[Metadata] = None

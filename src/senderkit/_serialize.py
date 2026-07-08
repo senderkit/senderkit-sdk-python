@@ -125,6 +125,8 @@ def template_send_to_body(req: TemplateSend) -> Dict[str, Any]:
             "cc": req.cc,
             "bcc": req.bcc,
             "replyTo": req.reply_to,
+            "from": req.from_,
+            "fromName": req.from_name,
             "attachments": (
                 [_attachment_to_wire(a) for a in req.attachments] if req.attachments else None
             ),
@@ -139,6 +141,7 @@ def raw_send_to_body(req: RawSend) -> Dict[str, Any]:
             "channel": channel,
             "to": req.to,
             "from": req.from_,
+            "fromName": req.from_name,
             "interpolate": req.interpolate,
             "content": content_to_wire(req.content),
             "vars": req.vars,
