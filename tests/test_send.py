@@ -49,6 +49,20 @@ def test_send_serializes_envelope_and_datetime(client):
     assert body["scheduledAt"].startswith("2026-01-01T09:00:00")
 
 
+@respx.mock
+def test_send_serializes_from_overrides(client):
+    route = respx.post(f"{BASE_URL}/v1/send").mock(return_value=json_response(202, QUEUED))
+    client.send(
+        "welcome",
+        "user@example.com",
+        from_="hello@acme.com",
+        from_name="Acme Support",
+    )
+    body = request_body(route.calls.last.request)
+    assert body["from"] == "hello@acme.com"
+    assert body["fromName"] == "Acme Support"
+
+
 def test_api_key_required():
     with pytest.raises(ValueError):
         SenderKit(api_key="")

@@ -12,12 +12,16 @@ def test_send_raw_email_infers_channel(client):
     client.send_raw(
         "user@example.com",
         EmailContent(subject="Hi", html="<p>Hi {{name}}</p>", text="Hi"),
+        from_="hello@acme.com",
+        from_name="Acme Support",
         interpolate=True,
         vars={"name": "Ada"},
     )
     body = request_body(route.calls.last.request)
     assert body["channel"] == "email"
     assert body["to"] == "user@example.com"
+    assert body["from"] == "hello@acme.com"
+    assert body["fromName"] == "Acme Support"
     assert body["interpolate"] is True
     assert body["content"] == {"subject": "Hi", "html": "<p>Hi {{name}}</p>", "text": "Hi"}
     assert body["vars"] == {"name": "Ada"}

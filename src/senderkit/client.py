@@ -85,6 +85,8 @@ class SenderKit:
         bcc: Optional[List[str]] = None,
         reply_to: Optional[str] = None,
         attachments: Optional[list] = None,
+        from_: Optional[str] = None,
+        from_name: Optional[str] = None,
         idempotency_key: Optional[str] = None,
     ) -> SendResult:
         """Send a stored template to one recipient."""
@@ -101,6 +103,8 @@ class SenderKit:
                 bcc=bcc,
                 reply_to=reply_to,
                 attachments=attachments,
+                from_=from_,
+                from_name=from_name,
                 idempotency_key=idempotency_key,
             )
         )
@@ -112,6 +116,7 @@ class SenderKit:
         *,
         channel: Optional[ChannelLike] = None,
         from_: Optional[str] = None,
+        from_name: Optional[str] = None,
         interpolate: Optional[bool] = None,
         vars: Optional[Dict[str, Any]] = None,
         metadata: Optional[Dict[str, Any]] = None,
@@ -125,6 +130,7 @@ class SenderKit:
                 content=content,
                 channel=channel,
                 from_=from_,
+                from_name=from_name,
                 interpolate=interpolate,
                 vars=vars,
                 metadata=metadata,
@@ -215,6 +221,8 @@ class AsyncSenderKit:
         bcc: Optional[List[str]] = None,
         reply_to: Optional[str] = None,
         attachments: Optional[list] = None,
+        from_: Optional[str] = None,
+        from_name: Optional[str] = None,
         idempotency_key: Optional[str] = None,
     ) -> SendResult:
         return await self._send(
@@ -230,6 +238,8 @@ class AsyncSenderKit:
                 bcc=bcc,
                 reply_to=reply_to,
                 attachments=attachments,
+                from_=from_,
+                from_name=from_name,
                 idempotency_key=idempotency_key,
             )
         )
@@ -241,6 +251,7 @@ class AsyncSenderKit:
         *,
         channel: Optional[ChannelLike] = None,
         from_: Optional[str] = None,
+        from_name: Optional[str] = None,
         interpolate: Optional[bool] = None,
         vars: Optional[Dict[str, Any]] = None,
         metadata: Optional[Dict[str, Any]] = None,
@@ -253,6 +264,7 @@ class AsyncSenderKit:
                 content=content,
                 channel=channel,
                 from_=from_,
+                from_name=from_name,
                 interpolate=interpolate,
                 vars=vars,
                 metadata=metadata,
