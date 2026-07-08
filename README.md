@@ -274,6 +274,11 @@ except SignatureVerificationError:
 print(event.type, event.payload)   # e.g. "message.delivered", {...}
 ```
 
+Subscribable event types: `message.sent`, `message.delivered`, `message.failed`,
+`message.opted_out`, `message.opened`, and `message.clicked`. The engagement
+events (`message.opened` / `message.clicked`) never change a message's status,
+and the `message.clicked` payload also carries the clicked `link`.
+
 The framework integrations below wire this up for you.
 
 ## Framework integrations

@@ -179,6 +179,12 @@ class Message:
     template_slug: Optional[str]
     recipient: str
     created_at: str
+    #: First provider-reported email open (ISO 8601), or ``None`` until opened.
+    #: Set once on the first open; later opens don't update it.
+    opened_at: Optional[str] = None
+    #: First provider-reported link click (ISO 8601), or ``None`` until a link
+    #: is clicked. Set once on the first click; later clicks don't update it.
+    clicked_at: Optional[str] = None
     raw: Dict[str, Any] = field(default_factory=dict)
 
     @classmethod
@@ -191,6 +197,8 @@ class Message:
             template_slug=d.get("templateSlug"),
             recipient=str(d.get("recipient", "")),
             created_at=str(d.get("createdAt", "")),
+            opened_at=d.get("openedAt"),
+            clicked_at=d.get("clickedAt"),
             raw=d,
         )
 
