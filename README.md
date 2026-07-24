@@ -253,6 +253,36 @@ rendered = sk.templates.render("welcome", {"name": "Ada"})
 print(rendered.output, rendered.missing)
 ```
 
+## Inbound
+
+Provision addresses on your workspace's shared receiving domain and read the mail
+sent to them. Requires an API key with the `inbound` scope.
+
+```python
+# Provision an address (omit local_part for an auto-generated one).
+addr = sk.inbound.addresses.create(local_part="support", forward_to="team@acme.com")
+print(addr.address)   # "support@acme.in.senderkit.email"
+
+for a in sk.inbound.addresses.list():
+    print(a.id, a.address)
+
+# Received mail, newest first (filter by address, page with before=).
+for m in sk.inbound.messages.list(address=addr.id, limit=50):
+    print(m.id, m.from_, m.subject)
+
+msg = sk.inbound.messages.get("rcv_123")
+print(msg.text, [a.filename for a in msg.attachments])
+
+# Raw MIME source and attachment bytes.
+raw = sk.inbound.messages.raw("rcv_123")            # raw.content is bytes
+pdf = sk.inbound.messages.attachment("rcv_123", 0)  # pdf.filename / pdf.content
+
+sk.inbound.addresses.delete(addr.id)
+```
+
+Delivery of received mail is surfaced through the standard webhook engine as a
+`message.received` event.
+
 ## Webhooks
 
 SenderKit signs each webhook with an HMAC over the raw request body. Verify it against the
