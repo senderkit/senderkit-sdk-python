@@ -444,6 +444,53 @@ class InboundBytes:
 
 
 @dataclass
+class InboundDnsRecord:
+    """A DNS record a custom inbound domain must publish before it can receive."""
+
+    type: str
+    name: str
+    value: str
+    purpose: str
+    priority: Optional[int] = None
+
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> InboundDnsRecord:
+        return cls(
+            type=str(d.get("type", "")),
+            name=str(d.get("name", "")),
+            value=str(d.get("value", "")),
+            purpose=str(d.get("purpose", "")),
+            priority=d.get("priority"),
+        )
+
+
+@dataclass
+class InboundDomain:
+    """A custom inbound domain the workspace receives mail on (or the shared one)."""
+
+    id: str
+    domain: str
+    kind: str
+    status: str
+    verified_at: Optional[str]
+    created_at: str
+    records: List[InboundDnsRecord] = field(default_factory=list)
+
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> InboundDomain:
+        recs = d.get("records") or []
+        return cls(
+            id=str(d.get("id", "")),
+            domain=str(d.get("domain", "")),
+            kind=str(d.get("kind", "")),
+            status=str(d.get("status", "")),
+            verified_at=d.get("verifiedAt"),
+            created_at=str(d.get("createdAt", "")),
+            records=[InboundDnsRecord.from_dict(r) for r in recs if isinstance(r, dict)],
+        )
+
+
+@dataclass
 class Workspace:
     id: str
     slug: str

@@ -154,3 +154,115 @@ def test_get_inbound_attachment_parses_filename(client):
     assert att.content == b"PDFBYTES"
     assert att.content_type == "application/pdf"
     assert att.filename == "invoice.pdf"
+
+
+@respx.mock
+def test_create_inbound_address_with_domain_and_livemode(client):
+    route = respx.post(f"{BASE_URL}/v1/inbound/addresses").mock(
+        return_value=httpx.Response(
+            201,
+            json={
+                "id": "inb_3",
+                "address": "*@inbound.acme.com",
+                "description": None,
+                "forwardTo": None,
+                "active": True,
+                "livemode": False,
+                "createdAt": "2026-05-10T00:00:00Z",
+            },
+        )
+    )
+    created = client.inbound.addresses.create(
+        local_part="*",
+        domain_id="11111111-1111-1111-1111-111111111111",
+        livemode=False,
+    )
+    assert created.id == "inb_3"
+    assert request_body(route.calls.last.request) == {
+        "localPart": "*",
+        "domainId": "11111111-1111-1111-1111-111111111111",
+        "livemode": False,
+    }
+
+
+@respx.mock
+def test_list_inbound_domains(client):
+    respx.get(f"{BASE_URL}/v1/inbound/domains").mock(
+        return_value=httpx.Response(
+            200,
+            json={
+                "domains": [
+                    {
+                        "id": "d1",
+                        "domain": "acme.in.senderkit.email",
+                        "kind": "shared",
+                        "status": "verified",
+                        "records": [],
+                        "verifiedAt": "2026-05-10T00:00:00Z",
+                        "createdAt": "2026-05-10T00:00:00Z",
+                    },
+                    {
+                        "id": "d2",
+                        "domain": "inbound.acme.com",
+                        "kind": "custom",
+                        "status": "pending",
+                        "records": [
+                            {
+                                "type": "MX",
+                                "name": "inbound.acme.com",
+                                "value": "inbound-smtp.senderkit.email",
+                                "priority": 10,
+                                "purpose": "receiving",
+                            }
+                        ],
+                        "verifiedAt": None,
+                        "createdAt": "2026-05-10T00:00:00Z",
+                    },
+                ]
+            },
+        )
+    )
+    domains = client.inbound.domains.list()
+    assert len(domains) == 2
+    assert domains[1].domain == "inbound.acme.com"
+    assert domains[1].records[0].type == "MX"
+    assert domains[1].records[0].priority == 10
+
+
+@respx.mock
+def test_create_inbound_domain(client):
+    route = respx.post(f"{BASE_URL}/v1/inbound/domains").mock(
+        return_value=httpx.Response(
+            201,
+            json={
+                "id": "d3",
+                "domain": "inbound.acme.com",
+                "kind": "custom",
+                "status": "pending",
+                "records": [],
+                "verifiedAt": None,
+                "createdAt": "2026-05-10T00:00:00Z",
+            },
+        )
+    )
+    created = client.inbound.domains.create("inbound.acme.com", acknowledge_existing_mx=True)
+    assert created.id == "d3"
+    assert request_body(route.calls.last.request) == {
+        "domain": "inbound.acme.com",
+        "acknowledgeExistingMx": True,
+    }
+
+
+def test_create_inbound_domain_requires_domain(client):
+    import pytest
+
+    with pytest.raises(ValueError):
+        client.inbound.domains.create("")
+
+
+@respx.mock
+def test_delete_inbound_domain(client):
+    respx.delete(f"{BASE_URL}/v1/inbound/domains/d3").mock(
+        return_value=httpx.Response(200, json={"deleted": True})
+    )
+    assert client.inbound.domains.delete("d3") is True

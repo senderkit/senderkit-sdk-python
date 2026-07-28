@@ -15,6 +15,7 @@ from .._http import AsyncTransport, Transport
 from ..models import (
     InboundAddress,
     InboundBytes,
+    InboundDomain,
     InboundMessage,
     InboundMessageSummary,
 )
@@ -33,6 +34,8 @@ def _create_body(
     description: Optional[str],
     forward_to: Optional[str],
     webhook_endpoint_id: Optional[str],
+    domain_id: Optional[str],
+    livemode: Optional[bool],
 ) -> Dict[str, Any]:
     body: Dict[str, Any] = {}
     if local_part is not None:
@@ -43,6 +46,19 @@ def _create_body(
         body["forwardTo"] = forward_to
     if webhook_endpoint_id is not None:
         body["webhookEndpointId"] = webhook_endpoint_id
+    if domain_id is not None:
+        body["domainId"] = domain_id
+    if livemode is not None:
+        body["livemode"] = livemode
+    return body
+
+
+def _domain_create_body(domain: str, acknowledge_existing_mx: Optional[bool]) -> Dict[str, Any]:
+    if not domain:
+        raise ValueError("inbound.domains.create: domain is required")
+    body: Dict[str, Any] = {"domain": domain}
+    if acknowledge_existing_mx is not None:
+        body["acknowledgeExistingMx"] = acknowledge_existing_mx
     return body
 
 
@@ -90,9 +106,15 @@ class InboundAddresses:
         description: Optional[str] = None,
         forward_to: Optional[str] = None,
         webhook_endpoint_id: Optional[str] = None,
+        domain_id: Optional[str] = None,
+        livemode: Optional[bool] = None,
     ) -> InboundAddress:
-        """Provision a new address. Omit ``local_part`` for an auto-generated one."""
-        body = _create_body(local_part, description, forward_to, webhook_endpoint_id)
+        """Provision a new address. Omit ``local_part`` for an auto-generated one;
+        pass ``"*"`` for a catch-all. ``domain_id`` mints on a verified custom
+        domain; ``livemode`` sets the mode (defaults to live)."""
+        body = _create_body(
+            local_part, description, forward_to, webhook_endpoint_id, domain_id, livemode
+        )
         return InboundAddress.from_dict(
             self._t.request_json("POST", "/v1/inbound/addresses", body=body)
         )
@@ -142,12 +164,43 @@ class InboundMessages:
         return _to_bytes(resp)
 
 
+class InboundDomains:
+    """Synchronous custom-inbound-domain operations."""
+
+    def __init__(self, transport: Transport) -> None:
+        self._t = transport
+
+    def list(self) -> List[InboundDomain]:
+        """Return the workspace's inbound domains (shared + custom)."""
+        data = self._t.request_json("GET", "/v1/inbound/domains")
+        rows = data.get("domains") or []
+        return [InboundDomain.from_dict(d) for d in rows]
+
+    def create(
+        self, domain: str, *, acknowledge_existing_mx: Optional[bool] = None
+    ) -> InboundDomain:
+        """Claim a custom domain for receiving. The result carries the DNS
+        records to publish. If the domain already has live MX records elsewhere,
+        this raises a 409 ``SenderKitAPIError`` (``existing_mx``) — confirm with
+        the user, then retry with ``acknowledge_existing_mx=True``."""
+        body = _domain_create_body(domain, acknowledge_existing_mx)
+        return InboundDomain.from_dict(
+            self._t.request_json("POST", "/v1/inbound/domains", body=body)
+        )
+
+    def delete(self, id: str) -> bool:
+        """Delete a custom inbound domain. The shared domain cannot be deleted."""
+        data = self._t.request_json("DELETE", f"/v1/inbound/domains/{id}")
+        return bool(data.get("deleted", False))
+
+
 class Inbound:
-    """Synchronous ``inbound`` namespace: ``addresses`` and ``messages``."""
+    """Synchronous ``inbound`` namespace: ``addresses``, ``messages``, ``domains``."""
 
     def __init__(self, transport: Transport) -> None:
         self.addresses = InboundAddresses(transport)
         self.messages = InboundMessages(transport)
+        self.domains = InboundDomains(transport)
 
 
 class AsyncInboundAddresses:
@@ -168,8 +221,12 @@ class AsyncInboundAddresses:
         description: Optional[str] = None,
         forward_to: Optional[str] = None,
         webhook_endpoint_id: Optional[str] = None,
+        domain_id: Optional[str] = None,
+        livemode: Optional[bool] = None,
     ) -> InboundAddress:
-        body = _create_body(local_part, description, forward_to, webhook_endpoint_id)
+        body = _create_body(
+            local_part, description, forward_to, webhook_endpoint_id, domain_id, livemode
+        )
         return InboundAddress.from_dict(
             await self._t.request_json("POST", "/v1/inbound/addresses", body=body)
         )
@@ -218,9 +275,34 @@ class AsyncInboundMessages:
         return _to_bytes(resp)
 
 
+class AsyncInboundDomains:
+    """Asynchronous custom-inbound-domain operations."""
+
+    def __init__(self, transport: AsyncTransport) -> None:
+        self._t = transport
+
+    async def list(self) -> List[InboundDomain]:
+        data = await self._t.request_json("GET", "/v1/inbound/domains")
+        rows = data.get("domains") or []
+        return [InboundDomain.from_dict(d) for d in rows]
+
+    async def create(
+        self, domain: str, *, acknowledge_existing_mx: Optional[bool] = None
+    ) -> InboundDomain:
+        body = _domain_create_body(domain, acknowledge_existing_mx)
+        return InboundDomain.from_dict(
+            await self._t.request_json("POST", "/v1/inbound/domains", body=body)
+        )
+
+    async def delete(self, id: str) -> bool:
+        data = await self._t.request_json("DELETE", f"/v1/inbound/domains/{id}")
+        return bool(data.get("deleted", False))
+
+
 class AsyncInbound:
-    """Asynchronous ``inbound`` namespace: ``addresses`` and ``messages``."""
+    """Asynchronous ``inbound`` namespace: ``addresses``, ``messages``, ``domains``."""
 
     def __init__(self, transport: AsyncTransport) -> None:
         self.addresses = AsyncInboundAddresses(transport)
         self.messages = AsyncInboundMessages(transport)
+        self.domains = AsyncInboundDomains(transport)
