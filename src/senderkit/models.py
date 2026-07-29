@@ -321,6 +321,175 @@ class RenderResult:
         )
 
 
+# --------------------------------------------------------------------------- #
+# Inbound — receiving addresses and received mail (``inbound`` scope)
+# --------------------------------------------------------------------------- #
+@dataclass
+class InboundAddress:
+    """An address provisioned on the workspace's shared receiving domain."""
+
+    id: str
+    address: str
+    description: Optional[str]
+    forward_to: Optional[str]
+    active: bool
+    livemode: bool
+    created_at: str
+
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> InboundAddress:
+        return cls(
+            id=str(d.get("id", "")),
+            address=str(d.get("address", "")),
+            description=d.get("description"),
+            forward_to=d.get("forwardTo"),
+            active=bool(d.get("active", False)),
+            livemode=bool(d.get("livemode", False)),
+            created_at=str(d.get("createdAt", "")),
+        )
+
+
+@dataclass
+class InboundMessageSummary:
+    """A received-message summary, as returned by ``inbound.messages.list``."""
+
+    id: str
+    status: str
+    from_: Optional[str]
+    subject: Optional[str]
+    plus_tag: Optional[str]
+    size_bytes: int
+    received_at: str
+
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> InboundMessageSummary:
+        return cls(
+            id=str(d.get("id", "")),
+            status=str(d.get("status", "")),
+            from_=d.get("from"),
+            subject=d.get("subject"),
+            plus_tag=d.get("plusTag"),
+            size_bytes=int(d.get("sizeBytes", 0)),
+            received_at=str(d.get("receivedAt", "")),
+        )
+
+
+@dataclass
+class InboundAttachment:
+    """One attachment on a received message. Fetch bytes via ``.attachment(id, index)``."""
+
+    index: int
+    filename: Optional[str]
+    content_type: str
+    size: int
+    #: Authenticated API URL (requires an ``inbound``-scoped key), not a signed link.
+    url: str
+
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> InboundAttachment:
+        return cls(
+            index=int(d.get("index", 0)),
+            filename=d.get("filename"),
+            content_type=str(d.get("contentType", "")),
+            size=int(d.get("size", 0)),
+            url=str(d.get("url", "")),
+        )
+
+
+@dataclass
+class InboundMessage:
+    """A received message. Common fields are typed; ``.raw`` holds the full body."""
+
+    id: str
+    status: str
+    channel: str
+    address: Optional[str]
+    subject: Optional[str]
+    text: Optional[str]
+    html: Optional[str]
+    stripped_reply: Optional[str]
+    size_bytes: int
+    received_at: str
+    raw_url: str
+    attachments: List[InboundAttachment] = field(default_factory=list)
+    raw: Dict[str, Any] = field(default_factory=dict)
+
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> InboundMessage:
+        atts = d.get("attachments") or []
+        return cls(
+            id=str(d.get("id", "")),
+            status=str(d.get("status", "")),
+            channel=str(d.get("channel", "")),
+            address=d.get("address"),
+            subject=d.get("subject"),
+            text=d.get("text"),
+            html=d.get("html"),
+            stripped_reply=d.get("strippedReply"),
+            size_bytes=int(d.get("sizeBytes", 0)),
+            received_at=str(d.get("receivedAt", "")),
+            raw_url=str(d.get("rawUrl", "")),
+            attachments=[InboundAttachment.from_dict(a) for a in atts if isinstance(a, dict)],
+            raw=d,
+        )
+
+
+@dataclass
+class InboundBytes:
+    """Raw bytes fetched from an inbound message (raw MIME source or attachment)."""
+
+    content: bytes
+    content_type: str
+    filename: Optional[str] = None
+
+
+@dataclass
+class InboundDnsRecord:
+    """A DNS record a custom inbound domain must publish before it can receive."""
+
+    type: str
+    name: str
+    value: str
+    purpose: str
+    priority: Optional[int] = None
+
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> InboundDnsRecord:
+        return cls(
+            type=str(d.get("type", "")),
+            name=str(d.get("name", "")),
+            value=str(d.get("value", "")),
+            purpose=str(d.get("purpose", "")),
+            priority=d.get("priority"),
+        )
+
+
+@dataclass
+class InboundDomain:
+    """A custom inbound domain the workspace receives mail on (or the shared one)."""
+
+    id: str
+    domain: str
+    kind: str
+    status: str
+    verified_at: Optional[str]
+    created_at: str
+    records: List[InboundDnsRecord] = field(default_factory=list)
+
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> InboundDomain:
+        recs = d.get("records") or []
+        return cls(
+            id=str(d.get("id", "")),
+            domain=str(d.get("domain", "")),
+            kind=str(d.get("kind", "")),
+            status=str(d.get("status", "")),
+            verified_at=d.get("verifiedAt"),
+            created_at=str(d.get("createdAt", "")),
+            records=[InboundDnsRecord.from_dict(r) for r in recs if isinstance(r, dict)],
+        )
+
+
 @dataclass
 class Workspace:
     id: str

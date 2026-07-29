@@ -27,7 +27,14 @@ from .models import (
     SendResult,
     TemplateSend,
 )
-from .resources import AsyncMessages, AsyncTemplates, Messages, Templates
+from .resources import (
+    AsyncInbound,
+    AsyncMessages,
+    AsyncTemplates,
+    Inbound,
+    Messages,
+    Templates,
+)
 
 DEFAULT_BASE_URL = "https://api.senderkit.com"
 DEFAULT_TIMEOUT = 30.0
@@ -70,6 +77,7 @@ class SenderKit:
         self._transport = Transport(api_key, base_url, timeout, max_retries, http_client)
         self.messages = Messages(self._transport)
         self.templates = Templates(self._transport)
+        self.inbound = Inbound(self._transport)
 
     def send(
         self,
@@ -206,6 +214,7 @@ class AsyncSenderKit:
         self._transport = AsyncTransport(api_key, base_url, timeout, max_retries, http_client)
         self.messages = AsyncMessages(self._transport)
         self.templates = AsyncTemplates(self._transport)
+        self.inbound = AsyncInbound(self._transport)
 
     async def send(
         self,
