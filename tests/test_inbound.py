@@ -56,7 +56,8 @@ def test_delete_inbound_address(client):
     respx.delete(f"{BASE_URL}/v1/inbound/addresses/inb_1").mock(
         return_value=httpx.Response(200, json={"deleted": True})
     )
-    assert client.inbound.addresses.delete("inb_1") is True
+    deleted = client.inbound.addresses.delete("inb_1")
+    assert deleted is True
 
 
 @respx.mock
@@ -265,7 +266,8 @@ def test_delete_inbound_domain(client):
     respx.delete(f"{BASE_URL}/v1/inbound/domains/d3").mock(
         return_value=httpx.Response(200, json={"deleted": True})
     )
-    assert client.inbound.domains.delete("d3") is True
+    deleted = client.inbound.domains.delete("d3")
+    assert deleted is True
 
 
 @respx.mock
@@ -360,7 +362,8 @@ async def test_delete_inbound_domain_async(aclient):
     respx.delete(f"{BASE_URL}/v1/inbound/domains/d3").mock(
         return_value=httpx.Response(200, json={"deleted": True})
     )
-    assert await aclient.inbound.domains.delete("d3") is True
+    deleted = await aclient.inbound.domains.delete("d3")
+    assert deleted is True
 
 
 @respx.mock
@@ -405,7 +408,8 @@ async def test_async_inbound_addresses_full_surface(aclient):
     respx.delete(f"{BASE_URL}/v1/inbound/addresses/inb_9").mock(
         return_value=httpx.Response(200, json={"deleted": True})
     )
-    assert await aclient.inbound.addresses.delete("inb_9") is True
+    deleted = await aclient.inbound.addresses.delete("inb_9")
+    assert deleted is True
 
 
 @respx.mock
