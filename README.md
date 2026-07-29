@@ -280,6 +280,21 @@ pdf = sk.inbound.messages.attachment("rcv_123", 0)  # pdf.filename / pdf.content
 sk.inbound.addresses.delete(addr.id)
 ```
 
+Receive on your own domain instead of the shared one, and use a catch-all address:
+
+```python
+# Claim a custom domain — publish the returned DNS records to verify it.
+domain = sk.inbound.domains.create("inbound.acme.com")
+for r in domain.records:
+    print(r.type, r.name, r.value)
+
+# A catch-all on that domain (receives every local part no exact address claims).
+sk.inbound.addresses.create(local_part="*", domain_id=domain.id)
+
+for d in sk.inbound.domains.list():
+    print(d.domain, d.status)
+```
+
 Delivery of received mail is surfaced through the standard webhook engine as a
 `message.received` event.
 
