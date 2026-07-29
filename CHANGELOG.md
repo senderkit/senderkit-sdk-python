@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.3.0](https://github.com/senderkit/senderkit-sdk-python/compare/v0.2.0...v0.3.0) (2026-07-29)
+
+
+### Features
+
+* add inbound (receiving addresses + received mail) support ([fbc285b](https://github.com/senderkit/senderkit-sdk-python/commit/fbc285bbba2278e7e5d840790ae4d8c7462ab12f))
+* inbound receiving addresses and received mail ([a2be26d](https://github.com/senderkit/senderkit-sdk-python/commit/a2be26def97f5ba7671338aab31dd79227cc7819))
+* **inbound:** custom receiving domains + catch-all addresses ([6ea75c4](https://github.com/senderkit/senderkit-sdk-python/commit/6ea75c41bcd4d7cad887dc749b52d19180b1f28f))
+* **inbound:** custom receiving domains + catch-all addresses ([032e189](https://github.com/senderkit/senderkit-sdk-python/commit/032e1897c1963957ee8d76b21820468c52ae3469))
+
 ## [0.2.0](https://github.com/senderkit/senderkit-sdk-python/compare/v0.1.0...v0.2.0) (2026-07-08)
 
 
