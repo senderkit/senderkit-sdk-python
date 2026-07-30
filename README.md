@@ -320,9 +320,14 @@ print(event.type, event.payload)   # e.g. "message.delivered", {...}
 ```
 
 Subscribable event types: `message.sent`, `message.delivered`, `message.failed`,
-`message.opted_out`, `message.opened`, and `message.clicked`. The engagement
-events (`message.opened` / `message.clicked`) never change a message's status,
-and the `message.clicked` payload also carries the clicked `link`.
+`message.opted_out`, `message.complained`, `message.suppressed`, `message.opened`,
+and `message.clicked`. `message.complained` fires when the recipient marks the
+message as spam; a complaint emits both `message.complained` and `message.opted_out`,
+so handlers that only watch for opt-outs keep working unchanged. `message.suppressed`
+fires when a send is skipped because the address failed validation or was already on
+the suppression list after an earlier bounce or complaint. The engagement events
+(`message.opened` / `message.clicked`) never change a message's status, and the
+`message.clicked` payload also carries the clicked `link`.
 
 The framework integrations below wire this up for you.
 
