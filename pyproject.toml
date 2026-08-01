@@ -43,7 +43,7 @@ dev = [
     # Kept in lockstep with the pinned ruff-pre-commit hook (.pre-commit-config.yaml).
     # Pinned below 0.16: ruff 0.16 formats Python code blocks inside Markdown by
     # default, which would make `ruff format --check .` reformat README.md.
-    "ruff==0.15.17",
+    "ruff==0.16.0",
     "pre-commit>=3.7",
     "build>=1.2",
     "twine>=5",
