@@ -158,6 +158,9 @@ sk.send_raw(subscription_json, WebPushContent(title="Back in stock", body="Tap t
                                               click_url="https://example.com/item"))
 ```
 
+SMS recipients must be an [E.164](https://en.wikipedia.org/wiki/E.164) phone number
+(e.g. `+15555550123`); a non-E.164 `to` is rejected with `400 invalid_recipient`.
+
 ### Batch
 
 Sends many messages concurrently (a thread pool for sync, `asyncio` for async). A failed
