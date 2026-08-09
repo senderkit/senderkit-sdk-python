@@ -107,6 +107,8 @@ class TemplateSend:
     version: Optional[int] = None
     channel: Optional[ChannelLike] = None
     metadata: Optional[Metadata] = None
+    #: Defer delivery. Must be in the future and at most 30 days ahead; the API
+    #: rejects a past or too-distant timestamp with ``400``. Omit to send now.
     scheduled_at: Optional[ScheduledAt] = None
     cc: Optional[List[str]] = None
     bcc: Optional[List[str]] = None
@@ -134,6 +136,8 @@ class RawSend:
     interpolate: Optional[bool] = None
     vars: Optional[Vars] = None
     metadata: Optional[Metadata] = None
+    #: Defer delivery. Must be in the future and at most 30 days ahead; the API
+    #: rejects a past or too-distant timestamp with ``400``. Omit to send now.
     scheduled_at: Optional[ScheduledAt] = None
     idempotency_key: Optional[str] = None
 

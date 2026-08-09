@@ -126,7 +126,7 @@ sk.send(
     cc=["ops@example.com"],                              # email only
     from_="hello@acme.com",                              # email only — From address override (bare address)
     from_name="Acme Support",                            # email only — From display name → "Acme Support <hello@acme.com>"
-    scheduled_at=datetime(2026, 1, 1, 9, 0, tzinfo=timezone.utc),  # datetime or ISO-8601 string
+    scheduled_at=datetime(2026, 1, 1, 9, 0, tzinfo=timezone.utc),  # datetime or ISO-8601 string; future & ≤ 30 days ahead
     idempotency_key="order-1234-shipped",                # optional; see Idempotency below
 )
 ```
