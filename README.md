@@ -224,9 +224,10 @@ sit alongside it. Transient failures are retried before they ever reach you (see
 ## Messages
 
 ```python
-# One page (newest first). Filter by status, channel, template, or metadata.
+# One page (newest first). Filter by status, channel, template, or metadata,
+# or search (substring over id, recipient, template slug, and metadata).
 page = sk.messages.list(status="delivered", channel="email", limit=50,
-                        metadata={"user_id": "usr_123"})
+                        metadata={"user_id": "usr_123"}, search="user@example.com")
 for m in page.data:
     print(m.public_id, m.status)
 print(page.next_cursor)   # pass as cursor= for the next page, or None when done

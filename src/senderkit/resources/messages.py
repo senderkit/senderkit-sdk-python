@@ -24,9 +24,15 @@ class Messages:
         channel: Optional[ChannelLike] = None,
         template: Optional[str] = None,
         metadata: Optional[Dict[str, Any]] = None,
+        search: Optional[str] = None,
         tail: Optional[str] = None,
     ) -> MessageList:
-        """Return one page of messages, newest first, with a cursor for the next."""
+        """Return one page of messages, newest first, with a cursor for the next.
+
+        ``search`` is a case-insensitive substring match over a message's public
+        id, recipient, template slug, and metadata keys/values; use ``metadata``
+        for an exact match. Capped at 512 characters by the API.
+        """
         query = list_messages_query(
             limit=limit,
             cursor=cursor,
@@ -34,6 +40,7 @@ class Messages:
             channel=channel,
             template=template,
             metadata=metadata,
+            search=search,
             tail=tail,
         )
         return MessageList.from_dict(self._t.request_json("GET", "/v1/messages", query=query))
@@ -46,6 +53,7 @@ class Messages:
         channel: Optional[ChannelLike] = None,
         template: Optional[str] = None,
         metadata: Optional[Dict[str, Any]] = None,
+        search: Optional[str] = None,
     ) -> Iterator[Message]:
         """Yield every matching message, following ``next_cursor`` across pages."""
         cursor: Optional[str] = None
@@ -57,6 +65,7 @@ class Messages:
                 channel=channel,
                 template=template,
                 metadata=metadata,
+                search=search,
             )
             yield from page.data
             if not page.next_cursor:
@@ -87,6 +96,7 @@ class AsyncMessages:
         channel: Optional[ChannelLike] = None,
         template: Optional[str] = None,
         metadata: Optional[Dict[str, Any]] = None,
+        search: Optional[str] = None,
         tail: Optional[str] = None,
     ) -> MessageList:
         query = list_messages_query(
@@ -96,6 +106,7 @@ class AsyncMessages:
             channel=channel,
             template=template,
             metadata=metadata,
+            search=search,
             tail=tail,
         )
         return MessageList.from_dict(await self._t.request_json("GET", "/v1/messages", query=query))
@@ -108,6 +119,7 @@ class AsyncMessages:
         channel: Optional[ChannelLike] = None,
         template: Optional[str] = None,
         metadata: Optional[Dict[str, Any]] = None,
+        search: Optional[str] = None,
     ) -> AsyncIterator[Message]:
         cursor: Optional[str] = None
         while True:
@@ -118,6 +130,7 @@ class AsyncMessages:
                 channel=channel,
                 template=template,
                 metadata=metadata,
+                search=search,
             )
             for message in page.data:
                 yield message

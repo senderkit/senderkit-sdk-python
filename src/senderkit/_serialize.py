@@ -169,6 +169,7 @@ def list_messages_query(
     template: Optional[str],
     metadata: Optional[Dict[str, Any]],
     tail: Optional[str],
+    search: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Build the query dict for ``GET /v1/messages``, including ``metadata[key]``."""
     query: Dict[str, Any] = _prune(
@@ -178,6 +179,7 @@ def list_messages_query(
             "status": status.value if isinstance(status, Channel) else status,
             "channel": _channel_value(channel),
             "template": template,
+            "search": search,
             "tail": tail,
         }
     )

@@ -43,6 +43,15 @@ def test_list_with_filters_builds_query(client):
 
 
 @respx.mock
+def test_list_forwards_search(client):
+    route = respx.get(f"{BASE_URL}/v1/messages").mock(
+        return_value=httpx.Response(200, json={"data": [], "nextCursor": None})
+    )
+    client.messages.list(search="user@example.com")
+    assert route.calls.last.request.url.params["search"] == "user@example.com"
+
+
+@respx.mock
 def test_iter_paginates(client):
     respx.get(f"{BASE_URL}/v1/messages").mock(
         side_effect=[
