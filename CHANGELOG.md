@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.0](https://github.com/senderkit/senderkit-sdk-python/compare/v0.3.0...v0.4.0) (2026-08-31)
+
+
+### Features
+
+* add a search filter to messages.list ([f3dbde7](https://github.com/senderkit/senderkit-sdk-python/commit/f3dbde745da3347eeb70542844b7bc209b50a2e6))
+* add a search filter to messages.list ([b8dcd42](https://github.com/senderkit/senderkit-sdk-python/commit/b8dcd422dbe992ddd38c7c514e794baa90f4b211))
+
 ## [0.3.0](https://github.com/senderkit/senderkit-sdk-python/compare/v0.2.0...v0.3.0) (2026-07-29)
 
 
